@@ -1,23 +1,59 @@
 # Ant-Colony-Algorithm
 -An Ant Colony Algorithm GUI program
 
--You can Create your Own Environment
+WHAT DOSE THIS PROJECT DO???
 
-(There is few of initial Environments which I crated for you to test and play)
+- Create your Own Environment  (There is few of initial Environments which I crated for you to test and play)
 
--See how Ant Colony Algorithm 
+- Find the shotest path
 
--Save result as png and gif
+- Save result as .png and .gif
 
--Reseet srart and end
+WHAT FEATURES DOES IT HAVE?
 
--Resett Parameters
+- Clear visual interface
 
--Randomize a Grapph ...
+- New "Dead-cell" algorithm which greatly reduces the number of iterations(Of course you can choose not to use it)
 
--Ant_GUI.py and Ant_with_gui.py has been 'pyinstaller' to Ant GUI.exe
--You can just Run Ant GUI.exe without a python
+- You Can see how ants works on figure
+
+- Reseet srart and end easily
+
+- Adjustable parameters
+
+- Randomize a Grapph of course
+
+- Choose result save path
+
+CAN I USE IT TO SLOVE A MAZE???
+
+- YES!! Design your maze and slove it with ants. You will get a solution
+
+HOW I USE THIS PROJECT???
+
+- Make sure you download all files in the same file
+
+- You can just run Ant GUI.exe without a python
  
- -!! parameter.pkl and save_path.pkl is needed !!
- 
--Have FUN!!!
+- !! parameter.pkl and save_path.pkl must be in the same file with .exe !!
+
+- Set new result save path in 'Settings'
+
+- Click 'Start' to start and Explore yourself
+
+- It is recommended to run '20 Ietration, 100 Ant-numbers' first and run '80 Ietration 100 Ant-numbers' after. It will be better than '100 Ietration, 100 Ant-numbers' at first
+
+WHAT LANGUAGE DOSE THIS PROJET USE??
+
+- Python of course
+
+- Based on Ant Colony Algorithm and My original "Dead-cell" algorithm
+
+CAN IT BE USED FOR COMMERCIAL PURPOSES???
+
+- NO!!! I desgin it as my Graduation Project and I have not pass it
+
+LAST 
+- Randomize a Maze (to do)
+
+- Have FUN!!! and Enjoy it!!
