@@ -9,6 +9,8 @@ WHAT DOSE THIS PROJECT DO???
 
 - Save result as .jpg and .gif like this:
 
+![image](https://github.com/LiarGs/Ant-Colony-Algorithm-GUI/blob/master/images/Shortest%20Path%20Map%20(without%20dead-cell)%20th.gif)
+
 ![image](https://github.com/LiarGs/Ant-Colony-Algorithm-GUI/blob/master/images/Shortest%20Path%20Map%20(with%20dead-cell).jpg)
 
 WHAT FEATURES DOES IT HAVE?
