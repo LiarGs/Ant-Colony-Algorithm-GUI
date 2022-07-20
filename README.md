@@ -7,11 +7,9 @@ WHAT DOSE THIS PROJECT DO???
 
 - Find the shotest path
 
-- Save result as .jpg and .gif like this
+- Save result as .jpg and .gif like this:
 
 ![image](https://github.com/LiarGs/Ant-Colony-Algorithm-GUI/blob/master/images/Shortest%20Path%20Map%20(with%20dead-cell).jpg)
-
-![image](https://github.com/LiarGs/Ant-Colony-Algorithm-GUI/blob/master/images/Shortest%20Path%20Map%20(with%20dead-cell)%20th.gif)
 
 WHAT FEATURES DOES IT HAVE?
 
