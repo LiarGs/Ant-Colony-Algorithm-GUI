@@ -1,6 +1,9 @@
 # Ant-Colony-Algorithm
 -An Ant Colony Algorithm GUI program
--You can Create your Own Environment(There is few of initial Environments which I crated for you to test and play)
+
+-You can Create your Own Environment
+
+(There is few of initial Environments which I crated for you to test and play)
 
 -See how Ant Colony Algorithm GUI
 
