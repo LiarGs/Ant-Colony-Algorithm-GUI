@@ -7,7 +7,9 @@ WHAT DOSE THIS PROJECT DO???
 
 - Find the shotest path
 
-- Save result as .jpg and .gif
+- Save result as .jpg and .gif like this
+
+![image](https://github.com/LiarGs/Ant-Colony-Algorithm-GUI/blob/master/images/Shortest%20Path%20Map%20(with%20dead-cell).jpg)
 
 WHAT FEATURES DOES IT HAVE?
 
@@ -28,8 +30,6 @@ WHAT FEATURES DOES IT HAVE?
 CAN I USE IT TO SLOVE A MAZE???
 
 - YES!! Design your maze and slove it with ants. You will get a solution
-
-![image](public/images/Shortest Path Map (with dead-cell).jpg)
 
 HOW I USE THIS PROJECT???
 
