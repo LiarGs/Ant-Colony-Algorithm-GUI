@@ -5,7 +5,7 @@
 
 (There is few of initial Environments which I crated for you to test and play)
 
--See how Ant Colony Algorithm GUI
+-See how Ant Colony Algorithm 
 
 -Save result as png and gif
 
