@@ -7,7 +7,7 @@ WHAT DOSE THIS PROJECT DO???
 
 - Find the shotest path
 
-- Save result as .png and .gif
+- Save result as .jpg and .gif
 
 WHAT FEATURES DOES IT HAVE?
 
@@ -28,6 +28,8 @@ WHAT FEATURES DOES IT HAVE?
 CAN I USE IT TO SLOVE A MAZE???
 
 - YES!! Design your maze and slove it with ants. You will get a solution
+
+![image](public/images/Shortest Path Map (with dead-cell).jpg)
 
 HOW I USE THIS PROJECT???
 
