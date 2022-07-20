@@ -5,7 +5,7 @@ WHAT DOSE THIS PROJECT DO???
 
 - Create your Own Environment  (There is few of initial Environments which I crated for you to test and play)
 
-- Find the shotest path
+- Find the shortest path
 
 - Save result as .jpg and .gif like this:
 
@@ -21,17 +21,17 @@ WHAT FEATURES DOES IT HAVE?
 
 - You Can see how ants works on figure
 
-- Reseet srart and end easily
+- Reset  Start and End easily
 
 - Adjustable parameters
 
-- Randomize a Grapph of course
+- Randomize a Graph of course
 
 - Choose result save path
 
 CAN I USE IT TO SLOVE A MAZE???
 
-- YES!! Design your maze and slove it with ants. You will get a solution
+- YES!! Design your maze and solve  it with ants. You will get a solution
 
 HOW I USE THIS PROJECT???
 
@@ -43,9 +43,9 @@ HOW I USE THIS PROJECT???
 
 - Set new result save path in 'Settings'
 
-- Click 'Start' to start and Explore yourself
+- Click 'Start' to start and explore yourself
 
-- It is recommended to run '20 Ietration, 100 Ant-numbers' first and run '80 Ietration 100 Ant-numbers' after. It will be better than '100 Ietration, 100 Ant-numbers' at first
+- It is recommended to run '20 Iterations, 100 Ant-numbers' first and run '80 Iterations 100 Ant-numbers' after. It will be better than '100 Iterations, 100 Ant-numbers' at first
 
 WHAT LANGUAGE DOSE THIS PROJET USE??
 
@@ -55,7 +55,7 @@ WHAT LANGUAGE DOSE THIS PROJET USE??
 
 CAN IT BE USED FOR COMMERCIAL PURPOSES???
 
-- NO!!! I desgin it as my Graduation Project and I have not pass it
+- NO!!! I design it as my Graduation Project and I have not pass it
 
 LAST 
 - Randomize a Maze (to do)
