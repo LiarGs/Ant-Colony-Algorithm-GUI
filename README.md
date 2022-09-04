@@ -3,7 +3,7 @@
 
 WHAT DOSE THIS PROJECT DO???
 
-- Create your Own Environment  (There is few of initial Environments which I crated for you to test and play)
+- Create your own Environment  (There is few of initial Environments which I created for you to test and play)
 
 - Find the shortest path
 
