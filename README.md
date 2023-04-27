@@ -51,24 +51,22 @@
 多机器人路径规划GUI程序是一个功能丰富的路径规划软件，可以帮助用户快速在自定义的环境中找到最短路径。如果您在使用过程中遇到任何问题或有任何建议，请随时联系我们。
 
 
-Multi-robot Path Planning GUI Program User Guide
-Introduction
+# Multi-robot Path Planning GUI Program User Guide
+## Introduction
 This software is a GUI program based on the ant colony algorithm, which helps users find the shortest path in a customized environment and supports multi-robot path planning in the same environment. The results can be saved as .jpg and .gif formats. The software has a clear user interface, which allows users to easily reset the start and end points and customize the ant colony algorithm-related parameters. It also has a brand new original algorithm "Dead-Cell" algorithm which significantly improves search efficiency.
 
-Installation
+## Installation
 Before using this software, please make sure you have configured the relevant environment and downloaded all files into the same directory. You can start the program by running the Ant GUI.py file. If you haven't configured the relevant environment, you can also run the Ant GUI.exe program directly.
 
-Usage
-Creating an Environment
+## Usage
+### Creating an Environment
 In the program interface, you can choose to use your own created environment, or select one from the preset environments in the upper right corner of the interface to test. If you choose to create your own environment, you can directly draw obstacles, starting points, and ending points by clicking "CREATE NOW!!" in the interface to create the environment. If you only want to create a temporary environment, you can select "Don't Save" in the following pop-up window. You can also click "Randomize!!" and "Randomize a Maze!" on the right to randomly generate an environment or maze.
 
-Finding the Shortest Path
+### Finding the Shortest Path
 Once you have selected the environment, you can first deploy the starting and ending points of the robots by clicking the "Reset Start and End" button (left-click to change the obstacle status, right-click to set the starting or ending point). After setting the starting and ending points, you can click the "Run" button to start the ant colony algorithm and find the shortest path. You can adjust the relevant parameters of the ant colony algorithm, such as the number of iterations, the number of ants, and the pheromone evaporation coefficient, by clicking the "Set Parameters" button to obtain better results. The four choices on the left of the interface respectively represent whether to use the "Dead-Cell" algorithm, whether to save this result as an animation, whether to draw the intermediate process of the ant colony algorithm, and whether to choose four-way action (suitable for solving mazes).
 
-Saving the Result
+### Saving the Result
 When the ant colony algorithm completes the pathfinding task, a pop-up window will appear asking whether you want to apply this pathfinding environment to the next pathfinding. This setting is designed to adapt to the "Dead-Cell" algorithm. Because the function of this algorithm is to constantly exclude invalid points in the environment during ant pathfinding. Therefore, if you select "Yes" in the pop-up window, it means that you are not satisfied with the pathfinding result this time. You can change the relevant parameters of ant iterations and ants, and perform pathfinding again in a new environment where most invalid points have been excluded until you are satisfied. Therefore, the recommended method is to first run "20 iterations, 100 ants" to eliminate most of the invalid points in the environment, and then run "80 iterations, 100 ants" to get better results. If you select "No" in the pop-up window, the software will assume that you accept the pathfinding result of this time and save the result. You can find your results in the images folder. You can also change your save path in the Setting of the main interface.
-
-Here's the translation of your software documentation into English:
 
 ## Other Features
 
@@ -91,68 +89,3 @@ In addition to the main features mentioned above, this program also has the foll
 ## Conclusion
 
 The Multi-Robot Path Planning GUI program is a feature-rich path planning software that can help users quickly find the shortest path in a custom environment. If you encounter any problems or have any suggestions during use, please feel free to contact us.
-=======
-# Ant-Colony-Algorithm
--An Ant Colony Algorithm GUI program
-
-WHAT DOSE THIS PROJECT DO???
-
-- Create your own Environment  (There is few of initial Environments which I created for you to test and play)
-
-- Find the shortest path
-
-- Save result as .jpg and .gif like this:
-
-![image](https://github.com/LiarGs/Ant-Colony-Algorithm-GUI/blob/master/images/Shortest%20Path%20Map%20(without%20dead-cell)%20th.gif)
-
-![image](https://github.com/LiarGs/Ant-Colony-Algorithm-GUI/blob/master/images/Shortest%20Path%20Map%20(with%20dead-cell).jpg)
-
-WHAT FEATURES DOES IT HAVE?
-
-- Clear visual interface
-
-- New "Dead-cell" algorithm which greatly reduces the number of iterations(Of course you can choose not to use it)
-
-- You Can see how ants works on figure
-
-- Reset  Start and End easily
-
-- Adjustable parameters
-
-- Randomize a Graph of course
-
-- Choose result save path
-
-CAN I USE IT TO SLOVE A MAZE???
-
-- YES!! Design your maze and solve  it with ants. You will get a solution
-
-HOW I USE THIS PROJECT???
-
-- Make sure you download all files in the same file
-
-- You can just run Ant GUI.exe without a python
- 
-- !! parameter.pkl and save_path.pkl must be in the same file with .exe !!
-
-- Set new result save path in 'Settings'
-
-- Click 'Start' to start and explore yourself
-
-- It is recommended to run '20 Iterations, 100 Ant-numbers' first and run '80 Iterations 100 Ant-numbers' after. It will be better than '100 Iterations, 100 Ant-numbers' at first
-
-WHAT LANGUAGE DOSE THIS PROJET USE??
-
-- Python of course
-
-- Based on Ant Colony Algorithm and My original "Dead-cell" algorithm
-
-CAN IT BE USED FOR COMMERCIAL PURPOSES???
-
-- NO!!! I design it as my Graduation Project and I have not pass it
-
-LAST 
-- Randomize a Maze (to do)
-
-- Have FUN!!! and Enjoy it!!
->>>>>>> 4e751c2c9ef9be627d1269d2871e6a4b281f945f
