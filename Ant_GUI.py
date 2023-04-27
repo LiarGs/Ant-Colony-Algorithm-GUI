@@ -1,9 +1,10 @@
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QWidget, QDialog, QMessageBox, QPushButton, QLabel, QSlider, QGraphicsOpacityEffect, \
     QWhatsThis, QFrame, QCheckBox, QSpinBox, QComboBox, QLineEdit, QFileDialog
-from PyQt5.QtGui import QFont, QBrush, QPixmap, QPalette, QResizeEvent
+from PyQt5.QtGui import QFont, QBrush, QPixmap, QPalette, QResizeEvent, QMovie
 from PyQt5.QtCore import QTimer, QDateTime, QEvent, pyqtSignal
 from Ant_with_gui import *
+from Multiplayer_Robots import *
 from time import localtime
 
 pyl.rcParams['font.sans-serif'] = ['Kaitt', 'SimHei']  # 使画图正常显示中文
@@ -39,6 +40,7 @@ class MainWindow(QWidget):  # 界面主窗口
 
     def set_background(self):
         # 设置背景图片
+        print(localtime().tm_hour)
         if 5 < localtime().tm_hour < 16:  # 白天
             pix = QPixmap("background/day01.png")
         elif 15 < localtime().tm_hour < 19:  # 傍晚
@@ -165,23 +167,28 @@ class StartWindow(QWidget):
         self.mouse_x, self.mouse_y = None, None  # 鼠标在用户区按下的位置
         self.pressed = None  # 鼠标是否在用户区按下的标志
         self.preview = QLabel(self)  # 地形预览标签
-        self.show_num = True  # 设置创造环境时是否要显示序号
+        self.show_num = False  # 设置创造环境时是否要显示序号
         self.row, self.col = QSpinBox(self), QSpinBox(self)  # 输入自定义环境的行和列
         self.Iter_K, self.Ant_num = QSpinBox(self), QSpinBox(self)  # 输入此次的迭代次数和蚂蚁只数
-        self.dead_cell_check = QCheckBox("Use Deadcell Algorithm", self)
-        self.gif_check = QCheckBox("Save Result As GIF", self)
-        self.drawout_check = QCheckBox("Draw While Processing", self)
-        self.num_show_check = QCheckBox("Show number on cell", self)
+        self.dead_cell_check = QCheckBox("Use Deadcell Algorithm", self)  # 是否要使用死点算法
+        self.gif_check = QCheckBox("Save Result As GIF", self)  # 是否要将结果保存为GIF
+        self.drawout_check = QCheckBox("Draw While Processing", self)  # 是否要将中间部分过程保存下来
+        self.num_show_check = QCheckBox("Show number on cell", self)  # 画环境图时是否要在上面显示序号
+        self.directional_movement_check = QCheckBox("Four-Directional Movement", self)  # 是否改为四向行走方式
         self.Environment_window = EnWindow()  # 初始化环境类
         self.en_choose = QComboBox(self)  # 环境选择项
+        self.robot_choose = QComboBox(self)  # 机器人选择项
         self.current_filename = None  # 当前下拉列表选择的环境名
+        self.current_robot_name = None  # 当前下拉列表选择的机器人名
         self.temp_exist = False  # 环境中是否存在临时环境
+        self.del_robot_btn = QPushButton("Delete", self)  # 删除按钮
         self.set_ui()
 
     def set_ui(self):
         self.choose_en_btn()
         self.del_en_btn()
-        self.initialize_en()
+        self.choose_robot_btn()
+        self.edit_del_robot_btn()
         self.run_btn()
         self.parameter_btn()
         self.return_btn()
@@ -193,7 +200,9 @@ class StartWindow(QWidget):
         self.set_row_and_col()
         self.create_en_btn()
         self.set_k_and_m()
+        self.multi_btn()
         self.random_btn()
+        self.random_maze_btn()
 
     def choose_en_btn(self):
         self.en_choose.resize(250, 30)
@@ -206,6 +215,16 @@ class StartWindow(QWidget):
         self.font.setPointSize(16)
         en_choose_label.setFont(self.font)
         en_choose_label.move(1500, 160)
+
+        # 初始化环境选择表
+        graphs = listdir(save_path.en_save_path + '/pkl')
+        self.en_choose.addItems(graphs)
+        self.current_filename = self.en_choose.currentText()
+        if len(graphs):
+            self.en_activate(self.current_filename)
+        if "Temp.pkl" in graphs:
+            self.temp_exist = True
+
         # 监测选择哪个环境 就将哪个环境激活
         self.en_choose.activated[str].connect(lambda val: self.en_activate(val))
 
@@ -234,14 +253,64 @@ class StartWindow(QWidget):
                 if self.en_choose.count():  # 若还有剩余环境
                     self.en_activate(self.en_choose.currentText())  # 重新激活新环境
 
-    def initialize_en(self):
-        graphs = listdir(save_path.en_save_path + '/pkl')
-        self.en_choose.addItems(graphs)
-        self.current_filename = self.en_choose.currentText()
-        if len(graphs):
-            self.en_activate(self.current_filename)
-        if "Temp.pkl" in graphs:
-            self.temp_exist = True
+    def choose_robot_btn(self):
+        self.robot_choose.resize(250, 30)
+        self.robot_choose.move(1500, 300)
+        self.font.setPointSize(13)
+        self.robot_choose.setFont(self.font)
+        self.robot_choose.activated.connect(self.del_activate)
+        # self.robot_choose.setDuplicatesEnabled(True)  # 设置选项中不可重复
+
+        ro_choose_label = QLabel("Choose your Robot here", self)
+        self.font.setPointSize(16)
+        ro_choose_label.setFont(self.font)
+        ro_choose_label.move(1500, 260)
+
+        # 初始化机器人选择表
+        robots = listdir(save_path.result_save_path + '/Solutions')
+        robots.remove("pictures")
+        self.robot_choose.addItems(robots)
+        self.current_robot_name = self.robot_choose.currentText()
+        if len(robots):
+            self.robot_activate(self.current_robot_name)
+
+        # 监测选择哪个机器人 就展示哪个机器人路径图
+        self.robot_choose.activated[str].connect(lambda val: self.robot_activate(val))
+
+    def robot_activate(self, val):
+        self.current_robot_name = val
+        pix = QPixmap(save_path.result_save_path + "/Solutions/pictures/" + self.current_robot_name[:-4] + '.jpg')
+        self.preview.setPixmap(pix)
+
+    def edit_del_robot_btn(self):
+        self.del_robot_btn.setFont(self.font)
+        self.del_robot_btn.resize(110, 32)
+        self.del_robot_btn.move(1770, 299)
+        self.del_robot_btn.setIcon(QIcon("./ICON/delete.png"))
+        self.del_robot_btn.clicked.connect(self.del_robot)
+        if self.robot_choose.count() != 1:  # 若不是只有一个机器人 先设置为禁止删除
+            self.del_robot_btn.setEnabled(False)
+
+    def del_activate(self, index):  # 目的是只有选择最后一个机器人时，才允许删除
+        if index == self.robot_choose.count() - 1:
+            self.del_robot_btn.setEnabled(True)
+        else:
+            self.del_robot_btn.setEnabled(False)
+
+    def del_robot(self):
+        if self.robot_choose.count():
+            reply = QMessageBox.question(self, u'Wait!', u'Delete current robot path?', QMessageBox.Yes,
+                                         QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                os.remove(save_path.result_save_path + "/Solutions/" + self.robot_choose.currentText())  # 删除机器人变量
+                os.remove(save_path.result_save_path + '/Solutions/pictures/' + self.robot_choose.currentText()[
+                                                                                :-4] + '.jpg')  # 删除机器人图
+                del_index = self.robot_choose.currentIndex()
+                self.robot_choose.removeItem(del_index)
+                if self.robot_choose.count():  # 若还有剩余机器人
+                    self.robot_activate(self.robot_choose.currentText())  # 重新激活新机器人
+                else:  # 若已无剩余机器人
+                    self.del_robot_btn.setEnabled(False)
 
     def load_graph(self):  # 从pkl中加载环境变量
         if self.current_filename is not None:
@@ -274,8 +343,7 @@ class StartWindow(QWidget):
         else:
             if self.en_choose.count():
                 reply = QMessageBox.question(self, u'Wait!', u'Have you finished deploying your environment?',
-                                             QMessageBox.Yes,
-                                             QMessageBox.No)
+                                             QMessageBox.Yes, QMessageBox.No)
                 if reply == QMessageBox.Yes:
                     iter_K, ant_num = self.Iter_K.value(), self.Ant_num.value()
                     if not os.path.exists(save_path.result_save_path + "/Gen"):  # Gen为过程动图的存放位置，若不存在就创建
@@ -291,9 +359,9 @@ class StartWindow(QWidget):
                                                 is_gif=parameter.is_gif)
                         pyl.savefig(save_path.result_save_path + "\Shortest Path Map (with dead-cell).jpg")
                         reply = QMessageBox.question(self, u'Success!',
-                                                     u'Run time is '+str(t1)+' s\nDo you want to use this result as the initial environment for the next iteration?',
-                                                     QMessageBox.Yes,
-                                                     QMessageBox.No)
+                                                     u'Run time is ' + str(t1) +
+                                                     ' s\nDo you want to use this result as the initial environment for the next iteration?',
+                                                     QMessageBox.Yes, QMessageBox.No)
                         if reply == QMessageBox.No:  # 如果选择不,则直接保存此次的结果图
                             pyl.close("all")
                             f = open(save_path.en_save_path + '/pkl/' + self.current_filename, 'rb')
@@ -301,15 +369,29 @@ class StartWindow(QWidget):
                             graph = temp_sample.Graph  # 获得运行之前环境的复制
                             f.close()
                             Result_sample.Graph = graph  # 将结果对象的环境初始化
+                            num = len(listdir(save_path.result_save_path + '/Solutions/'))
+                            f = open(save_path.result_save_path + '/Solutions/Solution-' + str(num) + '.pkl', 'wb')
+                            # 保存结果变量方便读取
+                            dump(Result_sample, f)
+                            f.close()
                             Result_sample.draw_path(Result_sample.MinPath, "Shortest Path Map (without dead-cell)",
                                                     save_path=save_path.result_save_path, is_figure=False,
                                                     is_gif=parameter.is_gif)
                             pyl.savefig(save_path.result_save_path + "\Shortest Path Map (without dead-cell).jpg")
+                            pyl.savefig(
+                                save_path.result_save_path + "\Solutions\pictures\Solution-" + str(num) + ".jpg")
+                            pyl.close()
+                            # 将结果添加到界面条目中
+                            self.robot_choose.addItem("Solution-" + str(num) + ".pkl")
+                            self.robot_choose.setCurrentText("Solution-" + str(num) + ".pkl")
+                            self.del_robot_btn.setEnabled(True)
+                            self.robot_activate("Solution-" + str(num) + ".pkl")  # 激活并展示新机器人路径
                             # 绘制收敛路径
                             Result_sample.draw_path(Result_sample.LastPath, 'Convergence Path Diagram',
                                                     save_path=save_path.result_save_path, is_figure=False,
                                                     is_gif=parameter.is_gif)
                             pyl.savefig(save_path.result_save_path + "\Convergence Path Diagram.jpg")
+                            pyl.close()
                     else:
                         QMessageBox.warning(self, u'Failed!', u'No Path find')
 
@@ -370,24 +452,35 @@ class StartWindow(QWidget):
             else:  # 表示用户此次选择了保存
                 self.add_en(self.Environment_window.filename)
 
-    def set_checks(self):  # 设置是否要保存gif 画出中间过程 使用死点算法
+    def set_checks(self):  # 设置是否要 保存gif 画出中间过程 使用死点算法
         self.dead_cell_check.setChecked(True)
         self.dead_cell_check.setFont(self.font)
         self.dead_cell_check.move(120, 135)
         self.dead_cell_check.toggled.connect(self.update_checks)
 
         self.gif_check.setFont(self.font)
-        self.gif_check.move(120, 345)
+        self.gif_check.move(120, 275)
         self.gif_check.toggled.connect(self.update_checks)
 
         self.drawout_check.setFont(self.font)
-        self.drawout_check.move(120, 555)
+        self.drawout_check.move(120, 415)
         self.drawout_check.toggled.connect(self.update_checks)
+
+        self.directional_movement_check.setFont(self.font)
+        self.directional_movement_check.move(120, 555)
+        self.directional_movement_check.toggled.connect(self.update_checks)
+
+        # 设置是否在Cell上标出序号标签
+        self.num_show_check.resize(255, 30)
+        self.num_show_check.setFont(self.font)
+        self.num_show_check.move(120, 810)
+        self.num_show_check.toggled.connect(self.update_checks)
 
     def update_checks(self):  # 更新参数
         parameter.Deadcell = self.dead_cell_check.isChecked()
         parameter.is_gif = self.gif_check.isChecked()
         parameter.if_drawout = self.drawout_check.isChecked()
+        parameter.four_directional_movement = self.directional_movement_check.isChecked()
         self.show_num = self.num_show_check.isChecked()
 
     def set_row_and_col(self):
@@ -412,15 +505,9 @@ class StartWindow(QWidget):
         row_label.setFont(self.font)
         col_label.setFont(self.font)
         diy_label.setFont(self.font)
-        # 设置是否在Cell上标出序号标签
-        self.num_show_check.resize(225, 30)
-        self.num_show_check.setFont(self.font)
-        self.num_show_check.move(120, 810)
-        self.num_show_check.setChecked(True)
-        self.num_show_check.toggled.connect(self.update_checks)
 
     def create_en_btn(self):
-        crate_btn = QPushButton("CREATE NOW!!", self)
+        crate_btn = QPushButton(" CREATE NOW!!", self)
         crate_btn.resize(210, 50)
         crate_btn.move(170, 860)
         crate_btn.setFont(self.font)
@@ -470,10 +557,52 @@ class StartWindow(QWidget):
         ant_num_label.setFont(self.font)
         k_m_label.setFont(self.font)
 
+    def multi_btn(self):
+        multiplayer_btn = QPushButton("Multiplayer plan", self)
+        multiplayer_btn.resize(210, 50)
+        multiplayer_btn.move(1550, 610)
+        multiplayer_btn.setFont(self.font)
+        multiplayer_btn.setIcon(QIcon("ICON/route1.png"))
+        multiplayer_btn.clicked.connect(self.multi_plan)
+
+    def multi_plan(self):
+        if self.robot_choose.count() > 1:  # 如果有两个以上的可用的机器人
+            reply = QMessageBox.question(self, u'Wait!', u'Have you finished deploying your robots?',
+                                         QMessageBox.Yes, QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                robots_list = listdir(save_path.result_save_path + '/Solutions')
+                robots_list.remove("pictures")
+                robots = []  # 存放机器人变量
+
+                for i in range(len(robots_list)):  # 读入机器人信息
+                    f = open(save_path.result_save_path + '/Solutions/' + robots_list[i], 'rb')
+                    robots.append(initial_robot(load(f)))
+                    f.close()
+
+                #  以上 所有机器人都已存入Robots数组里
+                flag = 1  # 是否已经对所有机器人完成规划
+                while flag > 0:
+                    flag = Multi_Algor(robots, flag=0)
+
+                for i in range(len(robots)):
+                    draw_Multi_line(robots[i], index=i, Path=robots[i].MinPath, Title='MultiRobots')
+                final_draw(robots, save_path='./Robots')
+                pyl.close()
+                self.multi_show()  # 展示结果动图
+            else:
+                pass
+        else:
+            QMessageBox.warning(self, u'Wait!', u'You must have at least two Solutions!')
+
+    def multi_show(self):
+        movie = QMovie("./Robots/Robots.gif")
+        self.preview.setMovie(movie)
+        movie.start()
+
     def random_btn(self):
         randomize_btn = QPushButton("Randomize!!", self)
         randomize_btn.resize(210, 50)
-        randomize_btn.move(1550, 860)
+        randomize_btn.move(1420, 860)
         randomize_btn.setFont(self.font)
         randomize_btn.setIcon(QIcon("ICON/random.png"))
         randomize_btn.clicked.connect(self.randomize_en)
@@ -489,6 +618,62 @@ class StartWindow(QWidget):
         else:  # 若此次选择不保存
             self.add_en("Temp")
             self.preview.setPixmap(QPixmap(save_path.en_save_path + '/Temp.png'))
+
+    def random_maze_btn(self):
+        self.font.setPointSize(14)
+        randomize_btn = QPushButton("Randomize a Maze!", self)
+        randomize_btn.resize(210, 50)
+        randomize_btn.move(1670, 860)
+        randomize_btn.setFont(self.font)
+        randomize_btn.setIcon(QIcon("ICON/random.png"))
+        randomize_btn.clicked.connect(self.randomize_maze)
+
+    def randomize_maze(self):
+        Row = self.row.value()
+        Col = self.col.value()
+
+        if Row % 2 and Col % 2:  # 只有行列均为奇数才能生成迷宫
+            self.directional_movement_check.setChecked(True)  # 默认改为四向行走
+            # 地图初始化，并将出口和入口处的值设置为0
+            maze = -np.ones((Row, Col))
+
+            def check(r, c):
+                temp_sum = 0
+                for i in [[0, 1], [0, -1], [1, 0], [-1, 0]]:
+                    temp_sum += maze[r + i[0]][c + i[1]]
+                return temp_sum < -3
+
+            queue = []
+            row, col = (np.random.randint(1, Row - 1) // 2) * 2 + 1, (
+                    np.random.randint(1, Col - 1) // 2) * 2 + 1
+            queue.append((row, col, -1, -1))
+            while len(queue) != 0:
+                row, col, r_, c_ = queue.pop(np.random.randint(0, len(queue)))
+                if check(row, col):
+                    maze[row, col] = 0
+                    if r_ != -1 and row == r_:
+                        maze[row][min(col, c_) + 1] = 0
+                    elif r_ != -1 and col == c_:
+                        maze[min(row, r_) + 1][col] = 0
+                    for d in [[0, 2], [0, -2], [2, 0], [-2, 0]]:
+                        row_, col_ = row + d[0], col + d[1]
+                        if 0 < row_ < Row - 1 and 0 < col_ < Col - 1 and maze[row_][col_] == -1:
+                            queue.append((row_, col_, row, col))
+
+            maze[1, 0] = 0
+            maze[Row - 2, Col - 1] = 0
+            maze = np.matrix(-maze.astype(int))
+            # maze = maze[1:Row, 1:Col]
+            random_sample = Sample(g=maze)
+            self.Environment_window = EnWindow(m=Row, n=Col, en_sample=random_sample)
+            self.Environment_window.set_en(self.show_num)
+            if self.Environment_window.filename != "Temp":  # 若此次选择保存
+                self.add_en(self.Environment_window.filename)
+            else:  # 若此次选择不保存
+                self.add_en("Temp")
+                self.preview.setPixmap(QPixmap(save_path.en_save_path + '/Temp.png'))
+        else:
+            QMessageBox.warning(self, u'Wait!', u'You must set row and col both odd number')
 
     # 实现拖拽用户区移动窗口
     def mousePressEvent(self, event) -> None:
@@ -566,7 +751,7 @@ class ParameterSetWindow(QDialog):
         self.mouse_x, self.mouse_y = None, None
         self.setWindowTitle("Parameter Set -- Author : GS and XiaoYang")  # 设置窗口标题
         self.setWindowIcon(QIcon('ICON/icon.jpg'))  # 设置窗口图标
-        self.setWindowOpacity(0.85)  # 设置窗口不透明度
+        # self.setWindowOpacity(0.85)  # 设置窗口不透明度
         self.setWindowFlag(Qt.WindowCloseButtonHint)  # 设置只显示关闭按钮
         self.setWindowFlag(Qt.MSWindowsFixedSizeDialogHint)  # 设置窗口无法改变大小
         self.resize(800, 450)
@@ -848,7 +1033,7 @@ class EnWindow(QDialog):
         self.setWindowFlag(Qt.WindowMinMaxButtonsHint)
         self.setWindowTitle("Ant Search -- Design Your Environment -- Author : GS and XiaoYang")  # 设置窗口标题
         self.setWindowIcon(QIcon('ICON/icon.jpg'))  # 设置窗口图标
-        self.setWindowOpacity(0.95)  # 设置窗口不透明度
+        self.setWindowOpacity(1)  # 设置窗口不透明度
         if self.M <= 10 and self.N <= 10:  # 设置初始窗口大小
             self.resize(100 * self.N, 100 * self.M)
         elif self.M <= 20 and self.N <= 20:

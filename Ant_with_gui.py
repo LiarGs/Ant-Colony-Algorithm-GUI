@@ -84,7 +84,7 @@ class Sample(object):
             pyl.fill_between(SX, SY[0], SY[1], facecolor="#99ffff")  # 言和绿
         if self.E != -1:  # 终点为-1 表示不标出终点
             pyl.fill_between(EX, EY[0], EY[1], facecolor="#66ccff")  # 天依蓝
-        pyl.savefig(save_path + '\\' + name + ".png")
+        pyl.savefig(save_path + '/' + name + ".png")
         pyl.show()
         # pyl.close()
 
@@ -214,6 +214,7 @@ class Parameter(object):
         self.Deadcell = True  # 设置是否使用无效点算法
         self.if_drawout = False  # 设置是否画出中间过程
         self.is_gif = False  # 设置是否将结果保存为gif
+        self.four_directional_movement = False  # 设置是否改为四向行动
 
     def save(self):
         f = open('./parameter.pkl', 'wb')
@@ -316,8 +317,8 @@ def wall(g):  # 给G封上围墙
     return gg
 
 
-def distant(g):  # 计算邻接矩阵
-    # D(i,j)表示G中第i个元素(按列数)离G中第j(按列数)个元素的距离(0表示一步内不可到达 八向行动)
+def distant(g, is_four_dire_directional):  # 计算邻接矩阵
+    # D(i,j)表示G中第i个元素(按列数)离G中第j(按列数)个元素的距离(0表示一步内不可到达)
     mm, nn = g.shape[0], g.shape[1]
     D = (-1) * np.matrix(np.ones((mm * nn, mm * nn)))
     g = wall(g)  # 给G封上围墙
@@ -333,19 +334,25 @@ def distant(g):  # 计算邻接矩阵
                     px, py = jj * mm + ii, yy * mm + xx  # (px,py)表示对应的D中的坐标
                     p = row[k] + col[k] * 3
                     # 判断目标结点和当前节点的相对位置
-                    if p == 0:
-                        if g[x + 1, y] == 0 or g[x, y + 1] == 0:  # 只有当两边没有阻碍时 才表示可以前行
-                            D[px, py] = d  # 左上
-                    elif p == 2:
-                        if g[x - 1, y] == 0 or g[x, y + 1] == 0:
-                            D[px, py] = d  # 左下
-                    elif p == 6:
-                        if g[x, y - 1] == 0 or g[x + 1, y] == 0:
-                            D[px, py] = d  # 右上
-                    elif p == 8:
-                        if g[x, y - 1] == 0 or g[x - 1, y] == 0:
-                            D[px, py] = d  # 右下
+                    if is_four_dire_directional:  # 判断是否改为四向模式以方便走迷宫
+                        pass
                     else:
+                        if p == 0:
+                            if g[x + 1, y] == 0 or g[x, y + 1] == 0:  # 只有当两边没有阻碍时 才表示可以前行
+                                D[px, py] = d  # 左上
+                        elif p == 2:
+                            if g[x - 1, y] == 0 or g[x, y + 1] == 0:
+                                D[px, py] = d  # 左下
+                        elif p == 6:
+                            if g[x, y - 1] == 0 or g[x + 1, y] == 0:
+                                D[px, py] = d  # 右上
+                        elif p == 8:
+                            if g[x, y - 1] == 0 or g[x - 1, y] == 0:
+                                D[px, py] = d  # 右下
+                        else:
+                            D[px, py] = d
+
+                    if d == 1:
                         D[px, py] = d
     return D
 
@@ -391,7 +398,7 @@ def aca(sample, save_path, para, K=64, M=80):
     nn = sample.Graph.shape[1]
 
     gg = wall(sample.Graph)  # 给G封上围墙
-    D = distant(sample.Graph)  # 计算邻接矩阵
+    D = distant(sample.Graph, para.four_directional_movement)  # 计算邻接矩阵
     # result = sample  # 获得关于G的对象
     # -----------计算起始点&终止点-------------------
     N = mm * nn  # 节点总个数

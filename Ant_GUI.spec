@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(
-    ['Ant_GUI.py','Ant_with_gui.py'],
+    ['Ant_GUI.py', 'Ant_with_gui.py', 'Multiplayer_Robots.py'],
     pathex=[],
     binaries=[],
     datas=[],
